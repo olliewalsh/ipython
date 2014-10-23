@@ -495,7 +495,7 @@ class Client(HasTraits):
 
         self._notification_handlers = {'registration_notification' : self._register_engine,
                                     'unregistration_notification' : self._unregister_engine,
-                                    'shutdown_notification' : lambda msg: self.close(),
+                                    'shutdown_notification' : self._handle_hub_shutdown,
                                     }
         self._queue_handlers = {'execute_reply' : self._handle_execute_reply,
                                 'apply_reply' : self._handle_apply_reply}
@@ -702,6 +702,16 @@ class Client(HasTraits):
         eid = int(content['id'])
         if eid in self._ids:
             self._ids.remove(eid)
+            uuid = self._engines.pop(eid)
+
+            self._handle_stranded_msgs(eid, uuid)
+
+        if self._task_socket and self._task_scheme == 'pure':
+            self._stop_scheduling_tasks()
+
+    def _handle_hub_shutdown(self, msg):
+        while self._ids:
+            eid = self._ids.pop()
             uuid = self._engines.pop(eid)
 
             self._handle_stranded_msgs(eid, uuid)

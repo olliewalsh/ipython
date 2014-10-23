@@ -470,6 +470,7 @@ class IPControllerApp(BaseParallelApplication):
     
     def handle_signal(self, sig, frame):
         self.log.critical("Received signal %i, shutting down", sig)
+        self.factory.hub.shutdown()
         self.terminate_children()
         self.loop.stop()
     
