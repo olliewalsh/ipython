@@ -713,7 +713,6 @@ class Client(HasTraits):
         while self._ids:
             eid = self._ids.pop()
             uuid = self._engines.pop(eid)
-
             self._handle_stranded_msgs(eid, uuid)
 
         if self._task_socket and self._task_scheme == 'pure':
