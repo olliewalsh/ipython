@@ -719,6 +719,8 @@ class Client(HasTraits):
         if self._task_socket and self._task_scheme == 'pure':
             self._stop_scheduling_tasks()
 
+        self.close()
+
     def _handle_stranded_msgs(self, eid, uuid):
         """Handle messages known to be on an engine when the engine unregisters.
 
